@@ -1,44 +1,54 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
+ * ChatApp – Group Chat with MockSocket & Context API
  *
  * @format
  */
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import React, { useState } from 'react';
+import { StatusBar, StyleSheet, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { ChatProvider, useChat } from './src/context/ChatContext';
+import GroupListScreen from './src/screens/GroupListScreen';
+import ChatScreen from './src/screens/ChatScreen';
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+function AppNavigator() {
+  const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
+  const { setActiveGroup } = useChat();
 
-  return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
-  );
+  const handleSelectGroup = (groupId: string) => {
+    setActiveGroupId(groupId);
+    setActiveGroup(groupId);
+  };
+
+  const handleBack = () => {
+    setActiveGroup(null);
+    setActiveGroupId(null);
+  };
+
+  if (activeGroupId) {
+    return <ChatScreen groupId={activeGroupId} onBack={handleBack} />;
+  }
+
+  return <GroupListScreen onSelectGroup={handleSelectGroup} />;
 }
 
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
+function App() {
   return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
+    <SafeAreaProvider>
+      <ChatProvider>
+        <StatusBar barStyle="light-content" backgroundColor="#0D0F14" />
+        <View style={styles.container}>
+          <AppNavigator />
+        </View>
+      </ChatProvider>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#0D0F14',
   },
 });
 
