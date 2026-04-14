@@ -7,7 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useChat, type Group } from '../context/ChatContext';
+import { useChatState, type Group } from '../context/ChatContext';
 import { Colors, Spacing, BorderRadius, FontSize } from '../theme';
 
 interface Props {
@@ -15,7 +15,7 @@ interface Props {
 }
 
 export default function GroupListScreen({ onSelectGroup }: Props) {
-  const { state } = useChat();
+  const state = useChatState();
   const insets = useSafeAreaInsets();
 
   const renderItem = ({ item }: { item: Group }) => {

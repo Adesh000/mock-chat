@@ -10,7 +10,7 @@ import {
   Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useChat, type Message } from '../context/ChatContext';
+import { useChatState, useChatDispatch, type Message } from '../context/ChatContext';
 import { Colors, Spacing, BorderRadius, FontSize } from '../theme';
 
 interface Props {
@@ -19,7 +19,8 @@ interface Props {
 }
 
 export default function ChatScreen({ groupId, onBack }: Props) {
-  const { state, sendMessage } = useChat();
+  const state = useChatState();
+  const { sendMessage } = useChatDispatch();
   const [inputText, setInputText] = useState('');
   const flatListRef = useRef<FlatList>(null);
   const insets = useSafeAreaInsets();

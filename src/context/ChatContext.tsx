@@ -144,14 +144,14 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
 
 // ─── Context ─────────────────────────────────────────────────────────────────
 
-interface ChatContextValue {
-  state: ChatState;
+interface ChatDispatchValue {
   sendMessage: (groupId: string, text: string) => void;
   setActiveGroup: (groupId: string | null) => void;
   clearUnread: (groupId: string) => void;
 }
 
-const ChatContext = createContext<ChatContextValue | undefined>(undefined);
+const ChatStateContext = createContext<ChatState | undefined>(undefined);
+const ChatDispatchContext = createContext<ChatDispatchValue | undefined>(undefined);
 
 // ─── Provider ────────────────────────────────────────────────────────────────
 
@@ -212,20 +212,31 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'CLEAR_UNREAD', payload: groupId });
   }, []);
 
+  const dispatchValue = { sendMessage, setActiveGroup, clearUnread };
+
   return (
-    <ChatContext.Provider
-      value={{ state, sendMessage, setActiveGroup, clearUnread }}>
-      {children}
-    </ChatContext.Provider>
+    <ChatDispatchContext.Provider value={dispatchValue}>
+      <ChatStateContext.Provider value={state}>
+        {children}
+      </ChatStateContext.Provider>
+    </ChatDispatchContext.Provider>
   );
 }
 
-// ─── Hook ────────────────────────────────────────────────────────────────────
+// ─── Hooks ───────────────────────────────────────────────────────────────────
 
-export function useChat() {
-  const ctx = useContext(ChatContext);
-  if (!ctx) {
-    throw new Error('useChat must be used within a ChatProvider');
+export function useChatState() {
+  const ctx = useContext(ChatStateContext);
+  if (ctx === undefined) {
+    throw new Error('useChatState must be used within a ChatProvider');
+  }
+  return ctx;
+}
+
+export function useChatDispatch() {
+  const ctx = useContext(ChatDispatchContext);
+  if (ctx === undefined) {
+    throw new Error('useChatDispatch must be used within a ChatProvider');
   }
   return ctx;
 }

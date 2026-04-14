@@ -7,13 +7,13 @@
 import React, { useState } from 'react';
 import { StatusBar, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { ChatProvider, useChat } from './src/context/ChatContext';
+import { ChatProvider, useChatDispatch } from './src/context/ChatContext';
 import GroupListScreen from './src/screens/GroupListScreen';
 import ChatScreen from './src/screens/ChatScreen';
 
 function AppNavigator() {
   const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
-  const { setActiveGroup } = useChat();
+  const { setActiveGroup } = useChatDispatch();
 
   const handleSelectGroup = (groupId: string) => {
     setActiveGroupId(groupId);
